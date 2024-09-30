@@ -6,7 +6,7 @@
 #    By: jmafueni <jmafueni@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/01/09 14:58:09 by jmafueni          #+#    #+#              #
-#    Updated: 2024/09/25 21:26:16 by jmafueni         ###   ########.fr        #
+#    Updated: 2024/09/30 19:06:26 by jmafueni         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -21,7 +21,7 @@ NAME = libftprintf.a
 
 CC = cc
 
-CFLAGS = -Wall -Werror -Wextra -g3 -fPIC
+CFLAGS = -Wall -Werror -Wextra
 
 .c.o:
 	${CC} ${CFLAGS} -c $< -o ${<:.c=.o}

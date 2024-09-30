@@ -6,7 +6,7 @@
 /*   By: jmafueni <jmafueni@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/28 18:50:21 by jmafueni          #+#    #+#             */
-/*   Updated: 2024/09/30 17:44:15 by jmafueni         ###   ########.fr       */
+/*   Updated: 2024/09/30 20:37:27 by jmafueni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,7 +70,10 @@ char	*char_to_str(char const *s1, char const c)
 	j = 0;
 	str = malloc(sizeof(char) * (ft_strlen(s1) + 2));
 	if (!str)
-		return (NULL);
+	{
+		ft_printf("Memory allocation failed.\n");
+		exit(1);
+	}
 	while (s1[i])
 		str[j++] = s1[i++];
 	i = 0;
@@ -91,8 +94,8 @@ void	handle_signal(int sig)
 		s = ft_strdup("");
 	if (sig == SIGUSR1)
 		result |= (1 << (7 - bit_count));
-	else if (sig == SIGUSR2)
-		result &= ~(1 << (7 - bit_count));
+	// else if (sig == SIGUSR2)
+	// 	result &= ~(1 << (7 - bit_count));
 	bit_count++;
 	if (bit_count == 8)
 	{
