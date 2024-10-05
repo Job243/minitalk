@@ -6,86 +6,58 @@
 /*   By: jmafueni <jmafueni@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/28 18:49:57 by jmafueni          #+#    #+#             */
-/*   Updated: 2024/09/30 20:55:18 by jmafueni         ###   ########.fr       */
+/*   Updated: 2024/10/01 18:44:45 by jmafueni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minitalk.h"
+#include "../include/minitalk.h"
 
-int g_sig = 0;
+volatile sig_atomic_t	g_recu = 0;
 
-void	sig_handler_client(int signum)
+void	message_received(int sig)
 {
-	if (signum == SIGUSR2)
-		g_sig = 1;
+	if (sig == SIGUSR2)
+		ft_printf("Message reçu entièrement par le serveur.\n");
 }
 
-void	send_char(int pid, unsigned char c)
+void	action(int sig)
 {
-	int	bit;
-
-	bit = 7;
-	while (bit >= 0)
-	{
-		g_sig = 0;
-		if (c & (1 << bit))
-		{
-			if (kill(pid, SIGUSR1) == -1)
-			{
-				ft_printf("Failed to send SIGUSR1 to PID %d.\n", pid);
-				exit(1);
-			}
-		}
-		else
-		{
-			if (kill(pid, SIGUSR2) == -1)
-			{
-				ft_printf("Failed to send SIGUSR2 to PID %d.\n", pid);
-				exit(1);
-			}
-		}
-		while(!g_sig)
-			pause();
-		bit--;
-	}
+	(void)sig;
+	g_recu = 1;
 }
 
-void	send_message(int pid, const char *message)
+void	send_signal(int pid, char c, int bit_index)
 {
-	int	i;
-
-	i = 0;
-	if (message == NULL || ft_strlen(message) == 0)
-	{
-		ft_printf("Error: message is null or empty.\n");
+	if (bit_index < 0)
 		return ;
-	}
-	while (message[i] != '\0')
-	{
-		send_char(pid, message[i]);
-		i++;
-	}
-	send_char(pid, '\0');
+	if ((c >> bit_index) & 1)
+		kill(pid, SIGUSR2);
+	else
+		kill(pid, SIGUSR1);
+	while (!g_recu)
+		;
+		g_recu = 0;
+	send_signal(pid, c, bit_index - 1);
 }
 
-int	main(int ac, char **av)
+void	mt_kill(int pid, char *str)
 {
-	int			server_pid;
-	const char	*message;
+	while (*str)
+		send_signal(pid, *str++, 7);
+	send_signal(pid, 0, 7);
+}
 
-	if (ac != 3)
-	{
-		ft_printf("Usage: %s <server_pid> <message>\n", av[0]);
-		return (EXIT_FAILURE);
-	}
-	server_pid = ft_atoi(av[1]);
-	if (server_pid <= 0)
-	{
-		ft_printf("Invalid server PID.\n");
-		return (EXIT_FAILURE);
-	}
-	// ft_printf("kmc:%s\n", av[2]);
-	message = av[2];
-	send_message(server_pid, message);
-	return (EXIT_SUCCESS);
+int	main(int argc, char **argv)
+{
+	if (argc != 3 || !ft_strlen(argv[2]))
+		return (1);
+	ft_printf("client pid %d\n", getpid());
+	ft_putstr_fd("Sent    : ", 1);
+	ft_putnbr_fd(ft_strlen(argv[2]), 1);
+	ft_putchar_fd('\n', 1);
+	ft_putstr_fd("Received: ", 1);
+	signal(SIGUSR1, action);
+	signal(SIGUSR2, message_received);
+	mt_kill(ft_atoi(argv[1]), argv[2]);
+	return (0);
 }

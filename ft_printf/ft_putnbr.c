@@ -6,7 +6,7 @@
 /*   By: jmafueni <jmafueni@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/12 15:52:43 by jmafueni          #+#    #+#             */
-/*   Updated: 2024/01/18 12:41:45 by jmafueni         ###   ########.fr       */
+/*   Updated: 2024/10/01 16:51:48 by jmafueni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,12 +39,3 @@ int	ft_putnbr(int nb)
 	}
 	return (i);
 }
-
-/*int	main(void)
-{
-	int	n;
-
-	n = -2147483648;
-	printf("res = %d\n", ft_putnbr(n));
-	return (0);
-}*/
